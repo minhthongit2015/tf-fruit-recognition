@@ -1,0 +1,7 @@
+{
+  "name": "TF Fruit Recognition",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
