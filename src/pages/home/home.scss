@@ -1,3 +1,320 @@
-page-home {
 
+$txtcolor: #fff;
+$txtbg: #88d390;
+$tabfontsize: 20px;
+
+$headerbg: #5c8b75;
+
+$tabcontentcolor: #5c8b75;
+$tabcontentbg: #f1f1f1;
+
+
+page-home {
+  overflow: hidden;
+  #vid-canvas { display: none!important; }
+
+  .mybtn {
+    padding: 4px 8px;
+    font-size: 25px;
+    color: #fff;
+    background: #2d6f50;
+    border-bottom: 4px solid #1a412f;
+    border-radius: 5px;
+    margin: 4px auto;
+  }
+
+
+
+  #app-title {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    display: flex;
+
+    div {
+      border-radius: 6px;
+      padding: 4px 10px;
+      margin: 15px auto;
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      background: rgb(40, 182, 169);
+    }
+  }
+
+  .tabs {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: $tabfontsize;
+    display: flex;
+    transform: translateX(-100%);
+    transition: all .3s ease-in-out;
+
+    &.show {
+      transform: translateX(0%);
+    
+      .btn-tab-toggle {
+        position: static !important;
+      }
+    }
+
+    .btn-tab-toggle {
+      position: absolute;
+      left: 100%;
+      background: #5c8b75;
+      border-radius: 0 10px 10px 0;
+    }
+
+    .tab-nav {
+      min-width: 200px;
+      box-shadow: 2px 0px 18px #1a412f;
+      color: $txtcolor;
+      background: $txtbg;
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+
+      .tab-row {
+        border-bottom: 1px solid $txtcolor;
+        display: flex;
+        justify-content: stretch;
+        transition: .3s all ease-in-out;
+
+        &.show {
+          color: #2d6f50;
+          background: #beeac3;
+        }
+  
+        .tab-label {
+          flex-grow: 10;
+          padding: 4px;
+        }
+  
+        .tab-icon {
+          width: 30px;
+          text-align: center;
+          padding: 4px;
+        }
+      }
+  
+      .tab-header {
+        background: $headerbg;
+        padding: 6px;
+        font-size: 24px;
+        border-bottom: 3px double $txtcolor;
+      }
+    }
+
+    .tab-body {
+      min-width: 300px;
+      width: 550px;
+      color: $tabcontentcolor;
+      box-shadow: 7px 0 16px #5c8b75;
+      display: flex;
+      flex-direction: column;
+
+      transition: all .3s ease-in-out;
+      transform: translateX(-100%);
+      opacity: 0;
+      visibility: hidden;
+      
+      &.show {
+        transform: translateX(0%);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .tab-content-toggle {
+        background: #5c8b75;
+        padding: 6px 14px;
+        font-size: 24px;
+        border-bottom: 3px double #fff;
+        color: #fff;
+      }
+
+      .tab-content {
+        flex-grow: 10;
+        position: relative;
+        height: 100%;
+        background: $tabcontentbg;
+
+        .tab-content-label {
+          font-size: 30px;
+          border-bottom: 4px dotted #5c8b75;
+          margin-bottom: 20px;
+          padding: 4px 10px;
+        }
+
+        .tab-content-cell {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding: 20px;
+          transition: all .3s ease-in-out;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateX(-100%);
+
+          &.show {
+            transform: translateX(0%);
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+
+    .extra-info {
+      padding: 14px 8px;
+      border-top: 1px solid #fff;
+      box-shadow: inset 0 7px 14px rgba(0,0,0,.2);
+      flex-grow: 10;
+    }
+  }
+
+
+  .img-sets {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #70b695;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+
+    & > * {
+      margin: 6px;
+      border: 4px dashed #6ccc9f;
+      position: relative;
+
+      &::after {
+        content: attr(title);
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 2px solid #358b63;
+        background: #3bb37b;
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        padding: 4px;
+        margin: 4px;
+      }
+    }
+  }
+
+  .test-set .img-sets > div {
+    width: 224px;
+    height: 224px;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+
+    &:hover {
+      filter: brightness(1.1);
+      box-shadow: 4px 4px 33px #50816a, 4px 4px 10px #50816a;
+    }
+
+    img {
+      width: 224px;
+      height: 224px;
+    }
+  }
+
+
+  #canvas {
+    position: fixed;
+    display: block;
+    // height: 40%;
+    right: 10px;
+    top: 10px;
+    background: #000;
+    opacity: .7;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px #0ff;
+    box-sizing: content-box;
+    // zoom: 0.5;
+  }
+  #result-preview {
+    position: fixed;
+    display: block;
+    right: 10px;
+    bottom: 10px;
+    background: #fff;
+    opacity: .7;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px #0ff;
+    box-sizing: content-box;
+    zoom: 0.7;
+  }
+  #result {
+    position: fixed;
+    display: block;
+    right: 10px;
+    bottom: 10px;
+    background: #000;
+    opacity: .7;
+    color: #fff;
+    font-size: 20px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px #0ff;
+    box-sizing: content-box;
+  }
+  #result-text {
+    position: fixed;
+    display: block;
+    right: 4px;
+    top: 243px;
+    font-size: 22px;
+    width: 224px;
+    text-align: center;
+  }
+  #vid-canvas {
+    position: fixed;
+    display: block;
+    right: 10px;
+    top: 247px;
+    background: #000;
+    opacity: .7;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 4px #0ff;
+    box-sizing: content-box;
+    transform: scaleX(-1);
+  }
+
+  .traning-set {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .panel {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+
+    .btn {
+      background: #ffae5d;
+      color: #ffffff;
+      border: 2px solid #fa957f;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 20px;
+      margin: 6px;
+    }
+  }
+}
+html, body, ion-app, ion-content, ion-page, .nav-decor {
+  background-color: transparent !important;
 }

@@ -1,14 +1,174 @@
-<ion-header>
+<!-- <ion-header>
   <ion-navbar>
     <ion-title>
       Ionic Blank
     </ion-title>
   </ion-navbar>
-</ion-header>
+</ion-header> -->
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content>
+  <header id="app-title">
+    <div>TensorFlow Fruit Recognition!</div>
+  </header>
+
+  <div class="recognition-area">
+    <img id="canvas" width="224" height="224" [src]="base64Image">
+    <video id="vid-canvas" width="auto" height="224" autoplay playsinline muted></video>
+    <img id="result-preview" width="219" height="219" [src]="resultPreview">
+    <div id="result-text">[result]</div>
+  </div>
+  <div id="crop-frame"></div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab-nav">
+      <div class="tab-header tab-row">
+        <div class="tab-label">Tùy chọn</div>
+        <div class="tab-icon btn-tab-toggle" (click)="toggleShowTab()">»</div>
+      </div>
+      <div class="tab-item-list">
+        <div class="tab-item tab-row" [ngClass]='{"show": tabId==1}' (click)="openTab(1)">
+          <div class="tab-label">Training Set</div>
+          <div class="tab-icon">»</div>
+        </div>
+        <div class="tab-item tab-row" [ngClass]='{"show": tabId==2}' (click)="openTab(2)">
+          <div class="tab-label">Test Set</div>
+          <div class="tab-icon">»</div>
+        </div>
+        <div class="tab-item tab-row" [ngClass]='{"show": tabId==3}' (click)="openTab(3)">
+          <div class="tab-label">Model</div>
+          <div class="tab-icon">»</div>
+        </div>
+        <div class="tab-item tab-row" [ngClass]='{"show": activeCamera}' (click)="realtimeRecognition()">
+          <div class="tab-label">Real-time</div>
+          <div class="tab-icon">»</div>
+        </div>
+      </div>
+      <div class="extra-info">
+        <div id="statustext">Status...</div>
+      </div>
+    </div>
+
+    <div class="tab-body" [ngClass]='{"show": tabId>0}'>
+      <div class="tab-content-toggle"(click)="openTab(-1)">« Thu gọn</div>
+      <div class="tab-content">
+        <div class="tab-content-cell training-set" [ngClass]='{"show": tabId==1}'>
+          <div class="tab-content-label">Training Set</div>
+          <div class="img-sets" *ngFor="let set of datasets; let id = index;">
+            <div *ngFor="let i of set?.trainset" title="{{i+1}}"
+              (click)="recognitionFruit($event)">
+              <img src="assets/{{datasetDir}}/{{set.name}}-{{i+1}}.jpg" width="224" height="224" id="{{set.name}}-{{i+1}}">
+            </div>
+          </div>
+        </div>
+        <div class="tab-content-cell test-set" [ngClass]='{"show": tabId==2}'>
+          <div class="tab-content-label">Test Set</div>
+          <div class="img-sets" *ngFor="let set of datasets;">
+            <div *ngFor="let i of set?.testset" title="{{i+1}}"
+              (click)="recognitionFruit($event)">
+              <img src="assets/{{datasetDir}}/{{set.name}}-{{i+1}}.jpg" width="224" height="224">
+            </div>
+          </div>
+        </div>
+        <div class="tab-content-cell" [ngClass]='{"show": tabId==3}'>
+          <div class="tab-content-label">Machine Learning Model</div>
+          <div>
+            <div class="properties">
+              <label>
+                <span>Learning Rate: </span>
+                <select [(ngModel)]="ui.learningRate">
+                  <option value="0.00001">0.00001</option>
+                  <option selected value="0.0001">0.0001</option>
+                  <option value="0.01">0.001</option>
+                  <option value="0.03">0.003</option>
+                </select>
+              </label>
+              <label>
+                <span>Batch size: </span>
+                <select [(ngModel)]="ui.batchSizeFraction">
+                  <option value="0.05">0.05</option>
+                  <option value="0.1">0.1</option>
+                  <option value="0.2">0.2</option>
+                  <option selected value="0.4">0.4</option>
+                  <option value="1">1</option>
+                </select>
+              </label>
+              <br>
+              <label>
+                <span>Epochs: </span>
+                <select [(ngModel)]="ui.epochs">
+                  <option value="10">10</option>
+                  <option selected value="20">20</option>
+                  <option value="40">40</option>
+                </select>
+              </label>
+              <label>
+                <span>Hidden units: </span>
+                <select [(ngModel)]="ui.denseUnits">
+                  <option value="10">10</option>
+                  <option selected value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                </select>
+              </label>
+            </div>
+            
+            <ion-row>
+              <div class="mybtn btn-retrain" (click)="TFLoadModel()">Reload Model</div>
+              <div class="mybtn btn-retrain" (click)="startTraining()">Train Model</div>
+              <div class="mybtn btn-reset" (click)="resetModel()">Reset Model</div>
+            </ion-row>
+            
+            <ion-card>
+              <ion-card-header>
+                Loss: {{lastLoss}}
+              </ion-card-header>
+              <ion-card-content>
+                <canvas #lineCanvas></canvas>
+              </ion-card-content>
+            </ion-card>
+            
+            <ion-card>
+              <ion-card-header>
+                Algorithms
+              </ion-card-header>
+              <ion-card-content>
+                <table width=100%>
+                  <thead>
+                    <tr><th>Use for</th><th>Algorithm</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let alg of Algorithms; let i=index">
+                      <td>{{alg.type}}</td>
+                      <td>{{alg.name}}</td></tr>
+                  </tbody>
+                </table>
+              </ion-card-content>
+            </ion-card>
+
+            <ion-card>
+              <ion-card-header>
+                Model Layers
+              </ion-card-header>
+              <ion-card-content>
+                <table width=100%>
+                  <thead>
+                    <tr><th>Layer</th><th>Shape</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{{mobilenet?.name}}{{mobilenet?.useBias?" (use bias)":" (no bias)"}}</td>
+                      <td>in[{{mobilenet?.input.shape.join('x').slice(1)}}] => out[{{mobilenet?.output.shape.join('x').slice(1)}}]</td></tr>
+                    <tr *ngFor="let layer of model?.layers; let i=index">
+                      <td>{{layer.name}}{{layer.useBias?" (use bias)":"none bias"}}</td>
+                      <td>in[{{layer.input.shape.join('x').slice(1)}}] => out[{{layer.output.shape.join('x').slice(1)}}]</td></tr>
+                  </tbody>
+                </table>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </ion-content>
